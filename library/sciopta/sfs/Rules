@@ -1,0 +1,71 @@
+#-*-makefile-*-
+all: lib0sc lib0
+
+.PHONY: delivery_lib lib0 lib1 lib2
+ifeq ($(TRAPINTERFACE),1)
+.PHONY: lib0sc lib1sc lib2sc
+endif
+
+delivery_lib:
+ifeq ($(TARGET),68hc12)
+	@echo No SFS for HCS12
+else
+	$(MAKE) lib0
+	$(MAKE) lib1
+	$(MAKE) lib2
+ifeq ($(TRAPINTERFACE),1)
+	$(MAKE) lib0sc
+	$(MAKE) lib1sc
+	$(MAKE) lib2sc
+endif
+	$(MAKE) clean
+endif
+
+lib0: CFLAGS+="$(O0)"
+lib0: LIBSFS=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBSFS0)
+lib0: lib
+
+lib1: CFLAGS+="$(OSIZE)"
+lib1: LIBSFS=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBSFS1)
+lib1: lib
+
+lib2: CFLAGS+="$(OSPEED)"
+lib2: LIBSFS=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBSFS2)
+lib2: lib
+
+ifeq ($(TRAPINTERFACE),1)
+lib0sc: CFLAGS+=$(O0) -D__SYSCALL__
+lib0sc: LIBSFS=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBSFS0SC)
+lib0sc: lib
+
+lib1sc: CFLAGS+=$(OSIZE) -D__SYSCALL__
+lib1sc: LIBSFS=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBSFS1SC)
+lib1sc: lib
+
+lib2sc: CFLAGS+=$(OSPEED) -D__SYSCALL__
+lib2sc: LIBSFS=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBSFS2SC)
+lib2sc: lib
+endif
+
+clean:
+	@echo Cleaning sfs
+	@$(MAKE) -C utils clean
+	@$(MAKE) -C sh clean
+	@$(RM) version_sfs.$(OBJEXT)
+allobj: clean
+	@echo Building sfs $(CFLAGS)
+	@echo Building sfs/utils
+	@$(MAKE) -C utils all
+	@echo Building sfs/sh
+	@$(MAKE) -C sh all
+	@$(CC) $(CFLAGS) version_sfs.c
+lib: allobj
+	@echo Creating libraries
+	@$(RM) $(LIBSFS)
+	@$(MAKE) -C utils LIBSFS=../$(LIBSFS) library
+	@$(MAKE) -C sh LIBSFS=../$(LIBSFS) library
+ifeq ($(__IAR__),1)
+	$(AR) -c "fetch-mod version_sfs.$(OBJEXT) $(LIBSFS)"
+else
+	@$(AR) $(ARFLAGS) $(LIBSFS) version_sfs.$(OBJEXT)
+endif

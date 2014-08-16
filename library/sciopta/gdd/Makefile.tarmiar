@@ -1,0 +1,62 @@
+# -*-makefile-*-
+######################################################################
+##  _______  _______ _________ _______  _______ _________ _______   ##
+## (  ____ \(  ____ \\__   __/(  ___  )(  ____ )\__   __/(  ___  )  ##
+## | (    \/| (    \/   ) (   | (   ) || (    )|   ) (   | (   ) |  ##
+## | (_____ | |         | |   | |   | || (____)|   | |   | (___) |  ##
+## (_____  )| |         | |   | |   | ||  _____)   | |   |  ___  |  ##
+##       ) || |         | |   | |   | || (         | |   | (   ) |  ##
+## /\____) || (____/\___) (___| (___) || )         | |   | )   ( |  ##
+## \_______)(_______/\_______/(_______)|/          )_(   |/     \|  ##
+##                                                                  ##
+##                 (c) 2008 Sciopta AG/ Schweiz                     ##
+##                                                                  ##
+######################################################################
+## ID:                                                              ##
+## +Revision: 1.8 +                                                 ##
+## +Date: 2008/11/11 10:03:33 +                                     ##
+## generated Makefile                                               ##
+######################################################################
+
+# Make path UNIX like
+override SCIOPTA_HOME := $(subst \,/,$(SCIOPTA_HOME))
+export TARGET=tarmiar
+export BASETARGET=arm
+ifeq ($(SCIOPTA_HOME),)
+SCIOPTA_HOME=/tmp/sciopta/arm/1.9.6.8
+endif
+INC= -I$(SCIOPTA_HOME)/include
+INC+= -I$(SCIOPTA_HOME)/include/sciopta/$(BASETARGET)
+# Set host specific rules
+
+########################################
+# IAR ARM
+export IAR?=/compiler/iar/arm540/arm
+export __IAR__=2
+
+export CC=	$(IAR)/bin/iccarm -DTHUMB_MODE
+export AR=	$(IAR)/bin/iarchive
+
+export CFLAGS+= --cpu_mode thumb --interwork --diag_suppress Pa050 --silent
+export CFLAGS+= -e -D__inline=""
+
+export TRAPINTERFACE=1
+export ARFLAGS=  --replace
+export INC+=-I$(IAR)/inc
+export SUBDIR=iar
+export OBJEXT=o
+export O0= -Ol
+export OSIZE= -Ohz
+export OSPEED= -Ohs
+
+export LIBGDD=gdd_1.a
+export LIBGDD0=gdd_0.a
+export LIBGDD1=gdd_1.a
+export LIBGDD2=gdd_2.a
+
+export LIBGDDSC=gdd_1t.a
+export LIBGDD0SC=gdd_0t.a
+export LIBGDD1SC=gdd_1t.a
+export LIBGDD2SC=gdd_2t.a
+
+include Rules

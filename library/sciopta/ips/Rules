@@ -1,0 +1,157 @@
+#-*-makefile-*-
+
+jobs ?= -j 1
+
+.PHONY: delivery_lib library allobj
+
+all: lib0sc lib0
+
+delivery_lib:
+	@$(MAKE) -f Makefile.$(TARGET) lib0 lib1 lib2
+ifeq ($(TRAPINTERFACE),1)
+	@$(MAKE) -f Makefile.$(TARGET) lib0sc lib1sc lib2sc
+endif
+	@$(MAKE) -f Makefile.$(TARGET) clean
+
+export LIBIPS:=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBIPS)
+export LIBDHCP:=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBDHCP)
+export LIBTELNET:=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBTELNET)
+export LIBTFTP:=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBTFTP)
+export LIBFTP:=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBFTP)
+export LIBSMTP:=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBSMTP)
+export LIBDNS:=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBDNS)
+export LIBHTTP:=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBHTTP)
+
+.PHONY: lib0 lib1 lib2 libn libs libf lib0sc lib1sc lib2sc library
+
+lib0sc lib1sc lib2sc: export Y=t
+lib0sc: export CFLAGS+=-D__SYSCALL__
+lib0sc: lib0
+
+lib1sc: export CFLAGS+=-D__SYSCALL__
+lib1sc: lib1
+
+lib2sc: export CFLAGS+=-D__SYSCALL__
+lib2sc: lib2
+
+lib0: export CFLAGS+="$(O0)" -DSC_CDEBUG=1
+lib0: export X=_0
+
+lib1: export CFLAGS+="$(OSIZE)"
+lib1: export X=_1
+
+lib2: export CFLAGS+="$(OSPEED)"
+lib2: export X=_2
+
+lib0 lib1 lib2: 
+	@$(MAKE) $(jobs) -f Makefile.$(TARGET) clean libn
+	@$(MAKE) $(jobs) -f Makefile.$(TARGET) clean libs
+	@$(MAKE) $(jobs) -f Makefile.$(TARGET) clean libf
+
+libn: CFLAGS+="-DIPS_CONF=<ips_config.h>"
+libn: Z=
+libs: CFLAGS+="-DIPS_CONF=<ips_config_small.h>"
+libs: Z=s
+libf: CFLAGS+="-DIPS_CONF=<ips_config_full.h>"
+libf: Z=f
+
+libn libs libf: lib
+
+lib: CFLAGS += $(_CFLAGS)
+
+IPS_MODULES=ips smtp dhcp dns telnet tftp ftp http
+.PHONY: $(IPS_MODULES)
+lib: $(IPS_MODULES)
+
+ips:
+	@echo Config: $(X)$(Z)$(Y)
+	@rm -f $(LIBIPS)$(X)$(Z)$(Y).$(LIBEXT)
+	@echo Building ips/ips
+	@$(MAKE) -C ips all
+	@echo Building ips/device
+	@$(MAKE) -C device all
+	@echo Building ips/icmp
+	@$(MAKE) -C icmp all
+	@echo Building ips/igmp
+	@$(MAKE) -C igmp all
+	@echo Building ips/ipv4
+	@$(MAKE) -C ipv4 all
+	@echo Building ips/link
+	@$(MAKE) -C link all
+	@echo Building ips/ppp
+	@$(MAKE) -C ppp all
+	@echo Building ips/tcp
+	@$(MAKE) -C tcp all
+	@echo Building ips/udp
+	@$(MAKE) -C udp all
+	@echo ---------------------
+	@$(MAKE) -C ips    LIBIPS=../$(LIBIPS)$(X)$(Z)$(Y).$(LIBEXT) library
+	@$(MAKE) -C device LIBIPS=../$(LIBIPS)$(X)$(Z)$(Y).$(LIBEXT) library
+	@$(MAKE) -C ipv4   LIBIPS=../$(LIBIPS)$(X)$(Z)$(Y).$(LIBEXT) library
+	@$(MAKE) -C link   LIBIPS=../$(LIBIPS)$(X)$(Z)$(Y).$(LIBEXT) library
+	@$(MAKE) -C ppp    LIBIPS=../$(LIBIPS)$(X)$(Z)$(Y).$(LIBEXT) library
+	@$(MAKE) -C tcp    LIBIPS=../$(LIBIPS)$(X)$(Z)$(Y).$(LIBEXT) library
+	@$(MAKE) -C udp    LIBIPS=../$(LIBIPS)$(X)$(Z)$(Y).$(LIBEXT) library
+	@$(MAKE) -C icmp   LIBIPS=../$(LIBIPS)$(X)$(Z)$(Y).$(LIBEXT) library
+	@$(MAKE) -C igmp   LIBIPS=../$(LIBIPS)$(X)$(Z)$(Y).$(LIBEXT) library
+
+smtp:
+	@echo Building ips/smtp : Config: $(X)$(Z)$(Y)
+	@rm -f $(LIBSMTP)$(X)$(Z)$(Y).$(LIBEXT)
+	@$(MAKE) -C smtp all
+	@$(MAKE) -s -C smtp LIBSMTP=../$(LIBSMTP)$(X)$(Z)$(Y).$(LIBEXT) library
+
+dhcp:
+	@echo Building ips/$@: Config: $(X)$(Z)$(Y)
+	@rm -f $(LIBDHCP)
+	@$(MAKE) -C bootp all
+	@$(MAKE) -s -C bootp LIBDHCP=../$(LIBDHCP)$(X)$(Z)$(Y).$(LIBEXT) library
+
+telnet:
+	@echo Building ips/$@: Config: $(X)$(Z)$(Y)
+	@rm -f $(LIBTELNET)$(X)$(Z)$(Y).$(LIBEXT)
+	@$(MAKE) -s -C telnet all
+	@$(MAKE) -s -C telnet LIBTELNET=../$(LIBTELNET)$(X)$(Z)$(Y).$(LIBEXT) library
+tftp:
+	@echo Building ips/$@: Config: $(X)$(Z)$(Y)
+	@rm -f $(LIBTFTP)$(X)$(Z)$(Y).$(LIBEXT)
+	@$(MAKE) -s -C tftp all
+	@$(MAKE) -s -C tftp LIBTFTP=../$(LIBTFTP)$(X)$(Z)$(Y).$(LIBEXT) library
+
+ftp:
+	@echo Building ips/$@: Config: $(X)$(Z)$(Y)
+	@rm -f $(LIBFTP)$(X)$(Z)$(Y).$(LIBEXT)
+	@$(MAKE) -s -C ftp all
+	@$(MAKE) -s -C ftp LIBFTP=../$(LIBFTP)$(X)$(Z)$(Y).$(LIBEXT) library
+
+dns:
+	@echo Building ips/$@: Config: $(X)$(Z)$(Y)
+	@rm -f $(LIBDNS)$(X)$(Z)$(Y).$(LIBEXT)
+	@$(MAKE) -s -C dns all
+	@$(MAKE) -s -C dns LIBDNS=../$(LIBDNS)$(X)$(Z)$(Y).$(LIBEXT) library
+
+http:
+	@echo Building ips/$@: Config: $(X)$(Z)$(Y)
+	@rm -f $(LIBHTTP)$(X)$(Z)$(Y).$(LIBEXT)
+	@$(MAKE) -s -C http all
+	@$(MAKE) -s -C http LIBHTTP=../$(LIBHTTP)$(X)$(Z)$(Y).$(LIBEXT) library
+
+clean:
+	@echo Cleaning ips
+	@$(MAKE) -C ips clean
+	@$(MAKE) -C device clean
+	@$(MAKE) -C icmp clean
+	@$(MAKE) -C igmp clean
+	@$(MAKE) -C ipv4 clean
+	@$(MAKE) -C link clean
+	@$(MAKE) -C ppp clean
+	@$(MAKE) -C tcp clean
+	@$(MAKE) -C udp clean
+	@$(MAKE) -C bootp clean
+	@$(MAKE) -C dns clean
+	@$(MAKE) -C telnet clean
+	@$(MAKE) -C tftp clean
+	@$(MAKE) -C smtp clean
+	@$(MAKE) -C http clean
+	@$(MAKE) -C ftp clean
+	@$(RM) version_ips.$(OBJEXT)

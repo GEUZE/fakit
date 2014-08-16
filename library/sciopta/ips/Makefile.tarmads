@@ -1,0 +1,96 @@
+# -*-makefile-*-
+######################################################################
+##  _______  _______ _________ _______  _______ _________ _______   ##
+## (  ____ \(  ____ \\__   __/(  ___  )(  ____ )\__   __/(  ___  )  ##
+## | (    \/| (    \/   ) (   | (   ) || (    )|   ) (   | (   ) |  ##
+## | (_____ | |         | |   | |   | || (____)|   | |   | (___) |  ##
+## (_____  )| |         | |   | |   | ||  _____)   | |   |  ___  |  ##
+##       ) || |         | |   | |   | || (         | |   | (   ) |  ##
+## /\____) || (____/\___) (___| (___) || )         | |   | )   ( |  ##
+## \_______)(_______/\_______/(_______)|/          )_(   |/     \|  ##
+##                                                                  ##
+##                 (c) 2008 Sciopta AG/ Schweiz                     ##
+##                                                                  ##
+######################################################################
+## ID: S03218BS1                                                    ##
+## +Revision: 1.9 +                                                ##
+## +Date: 2009/01/08 12:14:29 +                                     ##
+## generated Makefile                                               ##
+######################################################################
+
+# Make path UNIX like
+override SCIOPTA_HOME := $(subst \,/,$(SCIOPTA_HOME))
+export TARGET=tarmads
+export BASETARGET=arm
+ifeq ($(SCIOPTA_HOME),)
+SCIOPTA_HOME=/tmp/sciopta/arm/1.9.6.8
+endif
+INC= -I$(SCIOPTA_HOME)/include
+INC+= -I$(SCIOPTA_HOME)/include/sciopta/$(BASETARGET)
+export IPS_ROOT = $(SCIOPTA_HOME)/ips
+# Set host specific rules
+
+########################################
+# ARM ADS
+export CC=	tcc -DTHUMB_MODE -c
+export AS=	armasm
+export LD=	armlink
+export AR=	armar
+
+export CFLAGS+=  --apcs /interwork -g --split_sections
+export ASFLAGS+= -apcs /interwork 
+export ARFLAGS = -r
+export INC +=-J$(SCDEV_ROOT)/gdd/scio/include -J"$(RVCT22INC)"
+
+export SUBDIR=arm
+export OBJEXT=o
+export LIBEXT=l
+export O0= -O0
+export OSIZE= -Ospace
+export OSPEED= -O2
+
+export LIBIPS=ips
+export LIBIPS0=ips_0.l
+export LIBIPS1=ips_1.l
+export LIBIPS2=ips_2.l
+
+export LIBSMTP=smtp
+export LIBSMTP0=smtp_0.l
+export LIBSMTP1=smtp_1.l
+export LIBSMTP2=smtp_2.l
+
+export LIBDHCP=dhcp
+export LIBDHCP0=dhcp_0.l
+export LIBDHCP1=dhcp_1.l
+export LIBDHCP2=dhcp_2.l
+
+export LIBTELNET=telnet
+export LIBTELNET0=telnet_0.l
+export LIBTELNET1=telnet_1.l
+export LIBTELNET2=telnet_2.l
+
+export LIBTFTP=tftp
+export LIBTFTP0=tftp_0.l
+export LIBTFTP1=tftp_1.l
+export LIBTFTP2=tftp_2.l
+
+export LIBSNMP=snmp
+export LIBSNMP0=snmp_0.l
+export LIBSNMP1=snmp_1.l
+export LIBSNMP2=snmp_2.l
+
+export LIBDNS=dns
+export LIBDNS0=dns_0.l
+export LIBDNS1=dns_1.l
+export LIBDNS2=dns_2.l
+
+export LIBHTTP=http
+export LIBHTTP0=http_0.l
+export LIBHTTP1=http_1.l
+export LIBHTTP2=http_2.l
+
+export LIBFTP=ftp
+export LIBFTP0=ftp_0.l
+export LIBFTP1=ftp_1.l
+export LIBFTP2=ftp_2.l
+include Rules

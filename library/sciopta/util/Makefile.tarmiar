@@ -1,0 +1,71 @@
+# -*-makefile-*-
+######################################################################
+##  _______  _______ _________ _______  _______ _________ _______   ##
+## (  ____ \(  ____ \\__   __/(  ___  )(  ____ )\__   __/(  ___  )  ##
+## | (    \/| (    \/   ) (   | (   ) || (    )|   ) (   | (   ) |  ##
+## | (_____ | |         | |   | |   | || (____)|   | |   | (___) |  ##
+## (_____  )| |         | |   | |   | ||  _____)   | |   |  ___  |  ##
+##       ) || |         | |   | |   | || (         | |   | (   ) |  ##
+## /\____) || (____/\___) (___| (___) || )         | |   | )   ( |  ##
+## \_______)(_______/\_______/(_______)|/          )_(   |/     \|  ##
+##                                                                  ##
+##                 (c) 2008 Sciopta AG/ Schweiz                     ##
+##                                                                  ##
+######################################################################
+## ID:                                                              ##
+## +Revision: 1.6 +                                                 ##
+## +Date: 2008/11/11 09:57:02 +                                     ##
+## generated Makefile                                               ##
+######################################################################
+
+# Make path UNIX like
+override SCIOPTA_HOME := $(subst \,/,$(SCIOPTA_HOME))
+export TARGET=tarmiar
+export BASETARGET=arm
+ifeq ($(SCIOPTA_HOME),)
+SCIOPTA_HOME=/tmp/sciopta/arm/1.9.6.8
+endif
+INC= -I$(SCIOPTA_HOME)/include
+INC+= -I$(SCIOPTA_HOME)/include/sciopta/$(BASETARGET)
+# Set host specific rules
+
+########################################
+# IAR ARM
+export IAR?=/compiler/iar/arm540/arm
+export __IAR__=2
+
+export CC=	$(IAR)/bin/iccarm -DTHUMB_MODE
+export AR=	$(IAR)/bin/iarchive
+
+export CFLAGS+= -e --cpu_mode thumb --interwork --diag_suppress Pa050,Pe111,Pe174,Pa084 --silent
+export CFLAGS+= -D__inline="" -Dstderr=9 -Dstdout=8 -Dfflush="" -Dfprintf=kprintf
+export TRAPINTERFACE=1
+export ARFLAGS= --replace
+export INC+=-I$(IAR)/inc
+export SUBDIR=iar
+export OBJEXT=o
+export O0= -Ol
+export OSIZE= -Ohz
+export OSPEED= -Ohs
+
+export LIBUTIL=util_1.a
+export LIBUTIL0=util_0.a
+export LIBUTIL1=util_1.a
+export LIBUTIL2=util_2.a
+
+export LIBSH=sh_1.a
+export LIBSH0=sh_0.a
+export LIBSH1=sh_1.a
+export LIBSH2=sh_2.a
+
+export LIBUTILSC=util_1t.a
+export LIBUTIL0SC=util_0t.a
+export LIBUTIL1SC=util_1t.a
+export LIBUTIL2SC=util_2t.a
+
+export LIBSHSC=sh_1t.a
+export LIBSH0SC=sh_0t.a
+export LIBSH1SC=sh_1t.a
+export LIBSH2SC=sh_2t.a
+
+include Rules

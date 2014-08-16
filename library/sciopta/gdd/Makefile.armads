@@ -1,0 +1,55 @@
+# -*-makefile-*-
+######################################################################
+##  _______  _______ _________ _______  _______ _________ _______   ##
+## (  ____ \(  ____ \\__   __/(  ___  )(  ____ )\__   __/(  ___  )  ##
+## | (    \/| (    \/   ) (   | (   ) || (    )|   ) (   | (   ) |  ##
+## | (_____ | |         | |   | |   | || (____)|   | |   | (___) |  ##
+## (_____  )| |         | |   | |   | ||  _____)   | |   |  ___  |  ##
+##       ) || |         | |   | |   | || (         | |   | (   ) |  ##
+## /\____) || (____/\___) (___| (___) || )         | |   | )   ( |  ##
+## \_______)(_______/\_______/(_______)|/          )_(   |/     \|  ##
+##                                                                  ##
+##                 (c) 2008 Sciopta AG/ Schweiz                     ##
+##                                                                  ##
+######################################################################
+## ID:                                                              ##
+## +Revision: 1.8 +                                                 ##
+## +Date: 2008/11/11 10:03:33 +                                     ##
+## generated Makefile                                               ##
+######################################################################
+
+# Make path UNIX like
+override SCIOPTA_HOME := $(subst \,/,$(SCIOPTA_HOME))
+export TARGET=armads
+export BASETARGET=arm
+ifeq ($(SCIOPTA_HOME),)
+SCIOPTA_HOME=/tmp/sciopta/arm/1.9.6.8
+endif
+INC= -I$(SCIOPTA_HOME)/include
+INC+= -I$(SCIOPTA_HOME)/include/sciopta/$(BASETARGET)
+# Set host specific rules
+
+########################################
+# ARM ADS
+export CC=	armcc -c
+export AS=	armasm
+export LD=	armlink
+export AR=	armar
+
+export CFLAGS+= -Wa -apcs /interwork -zo -Wb
+export ASFLAGS+= -apcs /interwork 
+export ARFLAGS = --create
+export INC +=-J$(SCDEV_ROOT)/gdd/scio/include -J"$(RVCT21INC)"
+
+export SUBDIR=arm
+export OBJEXT=o
+export O0= -O0
+export OSIZE= -Ospace
+export OSPEED= -O2
+
+export LIBGDD=gdd_a.l
+export LIBGDD0=gdd_0_a.l
+export LIBGDD1=gdd_1_a.l
+export LIBGDD2=gdd_2_a.l
+
+include Rules

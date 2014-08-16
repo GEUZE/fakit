@@ -1,0 +1,53 @@
+# -*-makefile-*-
+######################################################################
+##  _______  _______ _________ _______  _______ _________ _______   ##
+## (  ____ \(  ____ \\__   __/(  ___  )(  ____ )\__   __/(  ___  )  ##
+## | (    \/| (    \/   ) (   | (   ) || (    )|   ) (   | (   ) |  ##
+## | (_____ | |         | |   | |   | || (____)|   | |   | (___) |  ##
+## (_____  )| |         | |   | |   | ||  _____)   | |   |  ___  |  ##
+##       ) || |         | |   | |   | || (         | |   | (   ) |  ##
+## /\____) || (____/\___) (___| (___) || )         | |   | )   ( |  ##
+## \_______)(_______/\_______/(_______)|/          )_(   |/     \|  ##
+##                                                                  ##
+##                 (c) 2008 Sciopta AG/ Schweiz                     ##
+##                                                                  ##
+######################################################################
+## ID: S03218BS1                                                    ##
+## +Revision: 1.7 +                                                ##
+## +Date: 2008/11/11 09:58:53 +                                     ##
+## generated Makefile                                               ##
+######################################################################
+
+# Make path UNIX like
+override SCIOPTA_HOME := $(subst \,/,$(SCIOPTA_HOME))
+export TARGET=cm3
+export BASETARGET=arm
+ifeq ($(SCIOPTA_HOME),)
+SCIOPTA_HOME=/tmp/sciopta/arm/1.9.6.8
+endif
+INC= -I$(SCIOPTA_HOME)/include
+INC+= -I$(SCIOPTA_HOME)/include/sciopta/$(BASETARGET)
+# Set host specific rules
+
+export MACH ?=arm-none-eabi-
+
+export CC=$(DISTCC) $(MACH)gcc -c
+export AR=$(MACH)ar 
+export AS=$(MACH)as
+export LD=$(MACH)ld
+
+include Rules.gnu
+
+CFLAGS += $(_CFLAGS)
+CFLAGS += -mcpu=cortex-m3 -mthumb -fomit-frame-pointer
+CFLAGS += --param max-inline-insns-single=12
+ASFLAGS+= -mcpu=cortex-m3 -mthumb
+
+########################################
+# override SUBDIR from Rules.gnu
+export SUBDIR=gnu_cm3
+export CFLAGS
+export ASFLAGS
+export INC
+export TRAPINTERFACE=0
+include Rules

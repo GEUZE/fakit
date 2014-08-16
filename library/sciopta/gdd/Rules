@@ -1,0 +1,97 @@
+#-*-makefile-*-
+all: lib0sc lib0
+
+.PHONY: delivery_lib lib0 lib1 lib2
+ifeq ($(TRAPINTERFACE),1)
+.PHONY: lib0sc lib1sc lib2sc
+endif
+
+delivery_lib:
+	$(MAKE) lib0
+	$(MAKE) lib1
+	$(MAKE) lib2
+ifeq ($(TRAPINTERFACE),1)
+	$(MAKE) lib0sc
+	$(MAKE) lib1sc
+	$(MAKE) lib2sc
+endif
+	$(MAKE) clean
+
+lib0: CFLAGS+="$(O0)" -DSC_CDEBUG=1
+lib0: LIBGDD=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBGDD0)
+lib0: lib
+
+lib1: CFLAGS+="$(OSIZE)"
+lib1: LIBGDD=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBGDD1)
+lib1: lib
+
+lib2: CFLAGS+="$(OSPEED)"
+lib2: LIBGDD=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBGDD2)
+lib2: lib
+
+ifeq ($(TRAPINTERFACE),1)
+lib0sc: CFLAGS+="$(O0)" -D__SYSCALL__ -DSC_CDEBUG=1
+lib0sc: LIBGDD=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBGDD0SC)
+lib0sc: lib
+
+lib1sc: CFLAGS+=$(OSIZE) -D__SYSCALL__
+lib1sc: LIBGDD=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBGDD1SC)
+lib1sc: lib
+
+lib2sc: CFLAGS+=$(OSPEED) -D__SYSCALL__
+lib2sc: LIBGDD=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBGDD2SC)
+lib2sc: lib
+endif
+export CFLAGS_SDD = -DLOGD_LEVEL_MAX=LOGD_ALL -DSDD_MANAGER_POOL=SC_DEFAULT_POOL -DSDD_MANAGER_TMO=SC_FATAL_IF_TMO -DSDD_MAN_NOTIFY=1
+export CFLAGS_SCIO = 
+export CFLAGS_TTY = 
+export CFLAGS_NULLDEV = 
+export CFLAGS_RANDDEV = 
+export CFLAGS_PIPE = 
+export CFLAGS_SEM = 
+clean:
+	@echo Cleaning gdd
+	@$(MAKE) -C sdd clean
+	@$(MAKE) -C scio clean
+	@$(MAKE) -C tty clean
+	@$(MAKE) -C fildev clean
+	@$(MAKE) -C nulldev clean
+	@$(MAKE) -C randdev clean
+	@$(MAKE) -C pipe clean
+	@$(MAKE) -C sem clean
+	@$(RM) version_gdd.$(OBJEXT)
+allobj: clean
+	@echo Building gdd $(CFLAGS)
+	@echo Building gdd/sdd
+	@$(MAKE) -C sdd all
+	@echo Building gdd/scio
+	@$(MAKE) -C scio all
+	@echo Building gdd/tty
+	@$(MAKE) -C tty all
+	@echo Building gdd/fildev
+	@$(MAKE) -C fildev all
+	@echo Building gdd/nulldev
+	@$(MAKE) -C nulldev all
+	@echo Building gdd/randdev
+	@$(MAKE) -C randdev all
+	@echo Building gdd/pipe
+	@$(MAKE) -C pipe all
+	@echo Building gdd/sem
+	@$(MAKE) -C sem all
+	@$(CC) $(CFLAGS) version_gdd.c
+lib: allobj
+	@echo Creating libraries
+	@$(RM) $(LIBGDD)
+	@$(MAKE) -C sdd LIBGDD=../$(LIBGDD) library
+	@$(MAKE) -C scio LIBGDD=../$(LIBGDD) library
+	@$(MAKE) -C tty LIBGDD=../$(LIBGDD) library
+	@$(MAKE) -C fildev LIBGDD=../$(LIBGDD) library
+	@$(MAKE) -C nulldev LIBGDD=../$(LIBGDD) library
+	@$(MAKE) -C randdev LIBGDD=../$(LIBGDD) library
+	@$(MAKE) -C pipe LIBGDD=../$(LIBGDD) library
+	@$(MAKE) -C sem LIBGDD=../$(LIBGDD) library
+ifeq ($(__IAR__),1)
+	$(AR) -c "fetch-mod version_gdd.$(OBJEXT) $(LIBGDD)"
+else
+	@$(AR) $(ARFLAGS) $(LIBGDD) version_gdd.$(OBJEXT)
+endif

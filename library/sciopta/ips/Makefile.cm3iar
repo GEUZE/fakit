@@ -1,0 +1,54 @@
+# -*-makefile-*-
+######################################################################
+##  _______  _______ _________ _______  _______ _________ _______   ##
+## (  ____ \(  ____ \\__   __/(  ___  )(  ____ )\__   __/(  ___  )  ##
+## | (    \/| (    \/   ) (   | (   ) || (    )|   ) (   | (   ) |  ##
+## | (_____ | |         | |   | |   | || (____)|   | |   | (___) |  ##
+## (_____  )| |         | |   | |   | ||  _____)   | |   |  ___  |  ##
+##       ) || |         | |   | |   | || (         | |   | (   ) |  ##
+## /\____) || (____/\___) (___| (___) || )         | |   | )   ( |  ##
+## \_______)(_______/\_______/(_______)|/          )_(   |/     \|  ##
+##                                                                  ##
+##                 (c) 2008 Sciopta AG/ Schweiz                     ##
+##                                                                  ##
+######################################################################
+## ID: S03218BS1                                                    ##
+## +Revision: 1.9 +                                                ##
+## +Date: 2009/01/08 12:14:29 +                                     ##
+## generated Makefile                                               ##
+######################################################################
+
+# Make path UNIX like
+override SCIOPTA_HOME := $(subst \,/,$(SCIOPTA_HOME))
+export TARGET=cm3iar
+export BASETARGET=arm
+ifeq ($(SCIOPTA_HOME),)
+SCIOPTA_HOME=/tmp/sciopta/arm/1.9.6.8
+endif
+INC= -I$(SCIOPTA_HOME)/include
+INC+= -I$(SCIOPTA_HOME)/include/sciopta/$(BASETARGET)
+export IPS_ROOT = $(SCIOPTA_HOME)/ips
+# Set host specific rules
+
+########################################
+# IAR ARM
+export IAR?=/compiler/iar/arm540/arm
+export __IAR__=2
+export CC=	$(IAR)/bin/iccarm -DTHUMB_MODE
+export AR=	$(IAR)/bin/iarchive
+
+include Rules.iar
+
+
+export _CFLAGS+= --cpu=Cortex-M3 --diag_suppress Pa050,Pe111,Pe174,Pa084 --silent -e
+export _CFLAGS+= -D__inline="" -Dstderr=9 -Dstdout=8 -Dfflush="" -Dfprintf=kprintf
+export TRAPINTERFACE=0
+export ARFLAGS=  --replace
+export INC+=-I$(IAR)/inc
+export SUBDIR=iar_cm3
+export OBJEXT=o
+export LIBEXT=a
+export O0= -Ol
+export OSIZE= -Ohz
+export OSPEED= -Ohs
+include Rules

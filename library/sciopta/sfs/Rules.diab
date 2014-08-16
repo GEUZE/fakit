@@ -1,0 +1,23 @@
+
+export CC=dcc -c
+export AS=das
+export LD=dld
+export AR=dar
+
+export SUBDIR=diab
+export CFLAGS+=-g -D__inline= -Xsmall-data=0 -Xsmall-const=0
+export INC+=
+export OBJEXT=o
+export O0= -O0
+export OSIZE= -Os
+export OSPEED= -O3
+
+export LIBSFS0=libsfs_0.a
+export LIBSFS1=libsfs_1.a
+export LIBSFS2=libsfs_2.a
+export LIBSFS=libsfs_1.a
+
+export LIBSFS0SC=libsfs_0t.a
+export LIBSFS1SC=libsfs_1t.a
+export LIBSFS2SC=libsfs_2t.a
+export LIBSFSSC=libsfs_1t.a

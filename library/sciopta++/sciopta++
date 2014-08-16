@@ -1,0 +1,10 @@
+#include <sciopta.h>
+
+#include "scioptapp/message.hpp"
+#include "scioptapp/module.hpp"
+#include "scioptapp/pool.hpp"
+#include "scioptapp/priority.hpp"
+#include "scioptapp/process.hpp"
+#include "scioptapp/processname.hpp"
+#include "scioptapp/ticks.hpp"
+#include "scioptapp/timeout.hpp"

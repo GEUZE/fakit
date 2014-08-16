@@ -1,0 +1,34 @@
+export CC=dcc -c
+export AS=das
+export LD=dld
+export AR=dar
+
+export CFLAGS+=-g -D__inline= -Xsmall-data=0 -Xsmall-const=0
+export ARFLAGS=-rsc
+export SUBDIR=diab
+
+export INC+=
+export OBJEXT=o
+export O0= -O0
+export OSIZE= -Os
+export OSPEED= -O3
+
+export LIBUTIL0=libutil_0.a
+export LIBUTIL1=libutil_1.a
+export LIBUTIL2=libutil_2.a
+export LIBUTIL=libutil_1.a
+
+export LIBSH0=libsh_0.a
+export LIBSH1=libsh_1.a
+export LIBSH2=libsh_2.a
+export LIBSH=libsh_1.a
+
+export LIBUTIL0SC=libutil_0t.a
+export LIBUTIL1SC=libutil_1t.a
+export LIBUTIL2SC=libutil_2t.a
+export LIBUTILSC=libutil_1t.a
+
+export LIBSH0SC=libsh_0t.a
+export LIBSH1SC=libsh_1t.a
+export LIBSH2SC=libsh_2t.a
+export LIBSHSC=libsh_1t.a

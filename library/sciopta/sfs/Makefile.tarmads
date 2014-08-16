@@ -1,0 +1,60 @@
+# -*-makefile-*-
+######################################################################
+##  _______  _______ _________ _______  _______ _________ _______   ##
+## (  ____ \(  ____ \\__   __/(  ___  )(  ____ )\__   __/(  ___  )  ##
+## | (    \/| (    \/   ) (   | (   ) || (    )|   ) (   | (   ) |  ##
+## | (_____ | |         | |   | |   | || (____)|   | |   | (___) |  ##
+## (_____  )| |         | |   | |   | ||  _____)   | |   |  ___  |  ##
+##       ) || |         | |   | |   | || (         | |   | (   ) |  ##
+## /\____) || (____/\___) (___| (___) || )         | |   | )   ( |  ##
+## \_______)(_______/\_______/(_______)|/          )_(   |/     \|  ##
+##                                                                  ##
+##                 (c) 2008 Sciopta AG/ Schweiz                     ##
+##                                                                  ##
+######################################################################
+## ID: S03218BS1                                                    ##
+## +Revision: 1.7 +                                                ##
+## +Date: 2008/11/11 09:58:53 +                                     ##
+## generated Makefile                                               ##
+######################################################################
+
+# Make path UNIX like
+override SCIOPTA_HOME := $(subst \,/,$(SCIOPTA_HOME))
+export TARGET=tarmads
+export BASETARGET=arm
+ifeq ($(SCIOPTA_HOME),)
+SCIOPTA_HOME=/tmp/sciopta/arm/1.9.6.8
+endif
+INC= -I$(SCIOPTA_HOME)/include
+INC+= -I$(SCIOPTA_HOME)/include/sciopta/$(BASETARGET)
+# Set host specific rules
+
+########################################
+# ARM ADS
+export CC=	tcc -c -DTHUMB_MODE
+export AS=	armasm
+export LD=	armlink
+export AR=	armar
+
+export CFLAGS+= --thumb -Wa -apcs /interwork -zo -Wb
+export ASFLAGS+= --thumb -apcs /interwork 
+export ARFLAGS = -r -c
+
+export INC +=-J$(SCDEV_ROOT)/gdd/scio/include -J"$(RVCT22INC)"
+
+export SUBDIR=arm
+export OBJEXT=o
+export O0= -O0
+export OSIZE= -Ospace
+export OSPEED= -O2
+
+export LIBSFS0=sfs_0.l
+export LIBSFS1=sfs_1.l
+export LIBSFS2=sfs_2.l
+export LIBSFS=sfs_1.l
+
+export LIBSFS0SC=sfs_0t.l
+export LIBSFS1SC=sfs_1t.l
+export LIBSFS2SC=sfs_2t.l
+export LIBSFSSC=sfs_1t.l
+include Rules

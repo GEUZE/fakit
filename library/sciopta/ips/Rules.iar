@@ -1,0 +1,14 @@
+# -*-makefile-*-
+
+export _CFLAGS =-I$(IPS_ROOT)
+
+export LIBIPS=ips
+export LIBDHCP=dhcp
+export LIBTELNET=telnet
+export LIBTFTP=tftp
+export LIBFTP=ftp
+export LIBSNMP=snmp
+export LIBSMTP=smtp
+export LIBDNS=dns
+export LIBHTTP=http
+export LIBTEST=ipstst

@@ -1,0 +1,86 @@
+#-*-makefile-*-
+all: lib0sc lib0
+
+.PHONY: delivery_lib lib0 lib1 lib2
+ifeq ($(TRAPINTERFACE),1)
+.PHONY: lib0sc lib1sc lib2sc
+endif
+
+delivery_lib:
+	$(MAKE) lib0
+	$(MAKE) lib1
+	$(MAKE) lib2
+ifeq ($(TRAPINTERFACE),1)
+	$(MAKE) lib0sc
+	$(MAKE) lib1sc
+	$(MAKE) lib2sc
+endif
+	$(MAKE) clean
+
+lib0: CFLAGS+="$(O0)" -DSC_CDEBUG=1
+lib0: LIBUTIL=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBUTIL0)
+lib0: LIBSH=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBSH0)
+lib0: lib
+
+lib1: CFLAGS+="$(OSIZE)"
+lib1: LIBUTIL=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBUTIL1)
+lib1: LIBSH=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBSH1)
+lib1: lib
+
+lib2: CFLAGS+="$(OSPEED)"
+lib2: LIBUTIL=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBUTIL2)
+lib2: LIBSH=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBSH2)
+lib2: lib
+
+ifeq ($(TRAPINTERFACE),1)
+lib0sc: CFLAGS+="$(O0)" -D__SYSCALL__  -DSC_CDEBUG=1
+lib0sc: LIBUTIL=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBUTIL0SC)
+lib0sc: LIBSH=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBSH0SC)
+lib0sc: lib
+
+lib1sc: CFLAGS+=$(OSIZE) -D__SYSCALL__
+lib1sc: LIBUTIL=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBUTIL1SC)
+lib1sc: LIBSH=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBSH1SC)
+lib1sc: lib
+
+lib2sc: CFLAGS+=$(OSPEED) -D__SYSCALL__
+lib2sc: LIBUTIL=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBUTIL2SC)
+lib2sc: LIBSH=../lib/$(BASETARGET)/$(SUBDIR)/$(LIBSH2SC)
+lib2sc: lib
+endif
+
+allobj: clean
+	@echo Building util $(CFLAGS)
+	@echo Building util/logd
+	@$(MAKE) -C logd all
+	@echo Building util/container
+	@$(MAKE) -C container all
+	@echo Building util/libsc
+	@$(MAKE) -C libsc all
+	@echo Building util/sh
+	@$(MAKE) -C sh all
+	@$(CC) $(CFLAGS) version_util.c
+	@$(CC) $(CFLAGS) version_sh.c
+clean:
+	@echo Cleaning util
+	@$(MAKE) -C logd clean
+	@$(MAKE) -C container clean
+	@$(MAKE) -C libsc clean
+	@$(MAKE) -C sh clean
+	@$(RM) version_util.$(OBJEXT)
+	@$(RM) version_sh.$(OBJEXT)
+lib: allobj
+	@echo Creating libraries
+	@$(RM) $(LIBUTIL)
+	@$(RM) $(LIBSH)
+	@$(MAKE) -C logd LIBUTIL=../$(LIBUTIL) LIBSH=../$(LIBSH) library
+	@$(MAKE) -C container LIBUTIL=../$(LIBUTIL) LIBSH=../$(LIBSH) library
+	@$(MAKE) -C libsc LIBUTIL=../$(LIBUTIL) LIBSH=../$(LIBSH) library
+	@$(MAKE) -C sh LIBUTIL=../$(LIBUTIL) LIBSH=../$(LIBSH) library
+ifeq ($(__IAR__),1)
+	$(AR) -c "fetch-mod version_util.$(OBJEXT) $(LIBUTIL)"
+	$(AR) -c "fetch-mod version_sh.$(OBJEXT) $(LIBSH)"
+else
+	@$(AR) $(ARFLAGS) $(LIBUTIL) version_util.$(OBJEXT)
+	@$(AR) $(ARFLAGS) $(LIBSH) version_sh.$(OBJEXT)
+endif

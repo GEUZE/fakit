@@ -1,0 +1,70 @@
+# -*-makefile-*-
+######################################################################
+##  _______  _______ _________ _______  _______ _________ _______   ##
+## (  ____ \(  ____ \\__   __/(  ___  )(  ____ )\__   __/(  ___  )  ##
+## | (    \/| (    \/   ) (   | (   ) || (    )|   ) (   | (   ) |  ##
+## | (_____ | |         | |   | |   | || (____)|   | |   | (___) |  ##
+## (_____  )| |         | |   | |   | ||  _____)   | |   |  ___  |  ##
+##       ) || |         | |   | |   | || (         | |   | (   ) |  ##
+## /\____) || (____/\___) (___| (___) || )         | |   | )   ( |  ##
+## \_______)(_______/\_______/(_______)|/          )_(   |/     \|  ##
+##                                                                  ##
+##                 (c) 2008 Sciopta AG/ Schweiz                     ##
+##                                                                  ##
+######################################################################
+## ID:                                                              ##
+## +Revision: 1.6 +                                                 ##
+## +Date: 2008/11/11 09:57:02 +                                     ##
+## generated Makefile                                               ##
+######################################################################
+
+# Make path UNIX like
+override SCIOPTA_HOME := $(subst \,/,$(SCIOPTA_HOME))
+export TARGET=tarmads
+export BASETARGET=arm
+ifeq ($(SCIOPTA_HOME),)
+SCIOPTA_HOME=/tmp/sciopta/arm/1.9.6.8
+endif
+INC= -I$(SCIOPTA_HOME)/include
+INC+= -I$(SCIOPTA_HOME)/include/sciopta/$(BASETARGET)
+# Set host specific rules
+
+########################################
+# ARM ADS
+export CC=	armcc -DTHUMB_MODE -c
+export AS=	armasm
+export LD=	armlink
+export AR=	armar
+
+export CFLAGS+= --thumb --apcs /interwork --split-sections
+export ASFLAGS+= --thumb --apcs /interwork 
+export ARFLAGS = -r -c
+export INC +=-J$(SCDEV_ROOT)/gdd/scio/include -J"$(RVCT22INC)"
+
+export SUBDIR=arm
+export OBJEXT=o
+export O0= -O0
+export OSIZE= -Ospace
+export OSPEED= -O2
+export TRAPINTERFACE=1
+
+export LIBUTIL=util_1.l
+export LIBUTIL0=util_0.l
+export LIBUTIL1=util_1.l
+export LIBUTIL2=util_2.l
+
+export LIBSH=sh_1.l
+export LIBSH0=sh_0.l
+export LIBSH1=sh_1.l
+export LIBSH2=sh_2.l
+
+export LIBUTILSC=util_1t.l
+export LIBUTIL0SC=util_0t.l
+export LIBUTIL1SC=util_1t.l
+export LIBUTIL2SC=util_2t.l
+
+export LIBSHSC=sh_1t.l
+export LIBSH0SC=sh_0t.l
+export LIBSH1SC=sh_1t.l
+export LIBSH2SC=sh_2t.l
+include Rules

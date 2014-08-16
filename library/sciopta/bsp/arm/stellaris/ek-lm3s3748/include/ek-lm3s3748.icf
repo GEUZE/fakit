@@ -1,0 +1,61 @@
+/* -*-asm-*-
+**********************************************************************
+**  _______  _______ _________ _______  _______ _________ _______   **
+** (  ____ \(  ____ \\__   __/(  ___  )(  ____ )\__   __/(  ___  )  **
+** | (    \/| (    \/   ) (   | (   ) || (    )|   ) (   | (   ) |  **
+** | (_____ | |         | |   | |   | || (____)|   | |   | (___) |  **
+** (_____  )| |         | |   | |   | ||  _____)   | |   |  ___  |  **
+**       ) || |         | |   | |   | || (         | |   | (   ) |  **
+** /\____) || (____/\___) (___| (___) || )         | |   | )   ( |  **
+** \_______)(_______/\_______/(_______)|/          )_(   |/     \|  **
+**                                                                  **
+**              (c) 2009 SCIOPTA Systems AG/ Schweiz                **
+**                                                                  **
+**********************************************************************
+** ID: S09322BS1                                                    **
+** $Revision: 1.1.2.1 $                                             **
+** $Date: 2009/11/18 09:35:51 $                                     **
+** linker script for ek-lm3s3748 (IAR5 version)                     **
+**********************************************************************
+*/
+/*-Specials-*/
+define symbol _intvec_start__ = 0x00000000;
+/*-Memory Regions-*/
+define symbol _region_ROM_start__ = 0x00000000;
+define symbol _region_ROM_end__   = 0x0001FFFF;
+define symbol _region_RAM_start__ = 0x20000000;
+define symbol _region_RAM_end__   = 0x2000FFFF;
+/*-Sizes-*/
+define symbol _size_cstack__ = 0x0;
+define symbol _size_heap__   = 0x4;
+
+/* needed by resethook */
+export symbol _region_RAM_end__;
+
+/* to make linker happy, we define some symbols */
+define symbol IRQ_STACK$$Limit = _region_RAM_end__;
+export symbol IRQ_STACK$$Limit;
+
+define symbol FIQ_STACK$$Limit = _region_RAM_end__;
+export symbol FIQ_STACK$$Limit;
+
+define symbol CSTACK$$Limit = _region_RAM_end__;
+export symbol CSTACK$$Limit;
+
+/* define some block to keep certain segments together */
+define block DEBUG with alignment = 4, maximum size = 512K { section .debug* };
+define block KERNEL with alignment = 4, maximum size = 512K { section .text_krn* };
+define block INTVEC with alignment = 4, maximum size = 0x100 { section .intvec };
+
+/* define memory */
+define memory mem with size = 4G;
+define region ROM_region   = mem:[from _region_ROM_start__   to _region_ROM_end__];
+define region RAM_region   = mem:[from _region_RAM_start__   to _region_RAM_end__];
+
+initialize by copy { readwrite };
+do not initialize  { section .noinit };
+
+/* be sure INTVECs are first ! */
+place in ROM_region   { block INTVEC};
+place in ROM_region   { readonly,block DEBUG ,block KERNEL };
+place in RAM_region   { readwrite };

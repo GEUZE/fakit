@@ -1,0 +1,24 @@
+
+export CC=dcc -c
+export AS=das
+export LD=dld
+export AR=dar
+
+export SUBDIR=diab
+export CFLAGS+=-g -D__inline= -Xsmall-data=0 -Xsmall-const=0
+export ARFLAGS=-rsc
+export INC+=
+export OBJEXT=o
+export O0= -O0
+export OSIZE= -Os
+export OSPEED= -O3
+
+export LIBGDD=libgdd_1.a
+export LIBGDD0=libgdd_0.a
+export LIBGDD1=libgdd_1.a
+export LIBGDD2=libgdd_2.a
+
+export LIBGDDSC=libgdd_1t.a
+export LIBGDD0SC=libgdd_0t.a
+export LIBGDD1SC=libgdd_1t.a
+export LIBGDD2SC=libgdd_2t.a

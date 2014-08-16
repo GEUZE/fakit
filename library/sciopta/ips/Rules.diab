@@ -1,0 +1,27 @@
+
+export CC=dcc -c
+export AS=das
+export LD=dld
+export AR=dar
+
+export SUBDIR=diab
+export _CFLAGS=-g -D__inline=
+export _CFLAGS +=-I$(IPS_ROOT)
+export ARFLAGS=-rsc
+export INC+=
+export OBJEXT=o
+export LIBEXT=a
+export O0= -O0
+export OSIZE= -Os
+export OSPEED= -O3
+
+export LIBIPS=libips
+export LIBDHCP=libdhcp
+export LIBTELNET=libtelnet
+export LIBTFTP=libtftp
+export LIBFTP=libftp
+export LIBSNMP=libsnmp
+export LIBSMTP=libsmtp
+export LIBDNS=libdns
+export LIBHTTP=libhttp
+

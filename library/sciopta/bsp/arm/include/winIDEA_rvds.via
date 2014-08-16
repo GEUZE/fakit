@@ -1,0 +1,9 @@
+
+# Special linker-script for ISystem winIDEA
+#
+# winIDEA will replace the following line with the object-files
+# from the project. See ___Lnk.via in de Debug build output directory.
+& &
+
+
+

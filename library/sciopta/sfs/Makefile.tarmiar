@@ -1,0 +1,60 @@
+# -*-makefile-*-
+######################################################################
+##  _______  _______ _________ _______  _______ _________ _______   ##
+## (  ____ \(  ____ \\__   __/(  ___  )(  ____ )\__   __/(  ___  )  ##
+## | (    \/| (    \/   ) (   | (   ) || (    )|   ) (   | (   ) |  ##
+## | (_____ | |         | |   | |   | || (____)|   | |   | (___) |  ##
+## (_____  )| |         | |   | |   | ||  _____)   | |   |  ___  |  ##
+##       ) || |         | |   | |   | || (         | |   | (   ) |  ##
+## /\____) || (____/\___) (___| (___) || )         | |   | )   ( |  ##
+## \_______)(_______/\_______/(_______)|/          )_(   |/     \|  ##
+##                                                                  ##
+##                 (c) 2008 Sciopta AG/ Schweiz                     ##
+##                                                                  ##
+######################################################################
+## ID: S03218BS1                                                    ##
+## +Revision: 1.7 +                                                ##
+## +Date: 2008/11/11 09:58:53 +                                     ##
+## generated Makefile                                               ##
+######################################################################
+
+# Make path UNIX like
+override SCIOPTA_HOME := $(subst \,/,$(SCIOPTA_HOME))
+export TARGET=tarmiar
+export BASETARGET=arm
+ifeq ($(SCIOPTA_HOME),)
+SCIOPTA_HOME=/tmp/sciopta/arm/1.9.6.8
+endif
+INC= -I$(SCIOPTA_HOME)/include
+INC+= -I$(SCIOPTA_HOME)/include/sciopta/$(BASETARGET)
+# Set host specific rules
+
+########################################
+# IAR ARM
+export IAR?=/compiler/iar/arm540/arm
+export __IAR__=2
+
+export CC=	$(IAR)/bin/iccarm -DTHUMB_MODE
+export AR=	$(IAR)/bin/iarchive
+
+export CFLAGS+= --cpu_mode thumb --interwork --diag_suppress Pa050,Pe111,Pe174,Pa084,Pe175 --silent -e
+export CFLAGS+= -D__inline="" -Dstderr=9 -Dstdout=8 -Dfflush="" -Dfprintf=kprintf
+export SUBDIR=iar
+export TRAPINTERFACE=1
+export ARFLAGS=  --replace
+export INC+=-I$(IAR)/inc
+export OBJEXT=o
+export O0= -Ol
+export OSIZE= -Ohz
+export OSPEED= -Ohs
+
+export LIBSFS=sfs_1.a
+export LIBSFS0=sfs_0.a
+export LIBSFS1=sfs_1.a
+export LIBSFS2=sfs_2.a
+
+export LIBSFSSC=sfs_1t.a
+export LIBSFS0SC=sfs_0t.a
+export LIBSFS1SC=sfs_1t.a
+export LIBSFS2SC=sfs_2t.a
+include Rules
